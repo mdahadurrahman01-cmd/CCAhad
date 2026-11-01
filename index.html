@@ -4,6 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>ক্লায়েন্ট রেকর্ড</title>
+ <link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#2563eb">
 <style>
 :root{--bg:#f6f7f9;--card:#fff;--tx:#1d2330;--mut:#6b7280;--bd:#e3e6eb;--pr:#2563eb;--prt:#fff;--dg:#dc2626;--gn:#16a34a;
 box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
@@ -182,5 +184,10 @@ $("brest").onclick=()=>{
 };
 showLock();
 </script>
+ <script>
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('service-worker.js');
+}
+ </script>
 </body>
 </html>
