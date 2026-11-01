@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ক্লায়েন্ট রেকর্ড</title>
+<style>
+:root{--bg:#f6f7f9;--card:#fff;--tx:#1d2330;--mut:#6b7280;--bd:#e3e6eb;--pr:#2563eb;--prt:#fff;--dg:#dc2626;--gn:#16a34a;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#12151b;--card:#1b2029;--tx:#e8ebf0;--mut:#9aa3b2;--bd:#2c3340;--pr:#3b82f6;--dg:#f87171;--gn:#4ade80;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#12151b;--card:#1b2029;--tx:#e8ebf0;--mut:#9aa3b2;--bd:#2c3340;--pr:#3b82f6;--dg:#f87171;--gn:#4ade80;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font-family:"Noto Sans Bengali",system-ui,sans-serif;font-size:15px}
+.w{max-width:900px;margin:0 auto;padding:14px}
+h1{font-size:20px;margin:6px 0 12px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:14px;margin-bottom:14px}
+.g{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.g .f{grid-column:1/-1}
+label{display:block;font-size:12px;color:var(--mut);margin-bottom:3px}
+input,textarea{width:100%;padding:10px;border:1px solid var(--bd);border-radius:8px;background:var(--bg);color:var(--tx);font:inherit}
+textarea{min-height:60px;resize:vertical}
+button{border:0;border-radius:8px;padding:10px 16px;font:inherit;cursor:pointer;background:var(--pr);color:var(--prt)}
+button.s{background:transparent;color:var(--pr);border:1px solid var(--bd);padding:6px 10px;font-size:13px}
+button.d{color:var(--dg)}
+.row{display:flex;gap:8px;margin-top:12px}
+.stats{display:flex;gap:10px;margin-bottom:12px}
+.stat{flex:1;background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:10px}
+.stat b{display:block;font-size:20px;color:var(--gn)}
+.stat span{font-size:12px;color:var(--mut)}
+.item{border-top:1px solid var(--bd);padding:12px 0}
+.item:first-child{border-top:0}
+.top{display:flex;justify-content:space-between;gap:8px;align-items:baseline}
+.nm{font-weight:600}
+.amt{color:var(--gn);font-weight:600;white-space:nowrap}
+.meta{color:var(--mut);font-size:13px;margin-top:3px}
+.acts{display:flex;gap:6px;margin-top:8px}
+.empty{color:var(--mut);text-align:center;padding:20px}
+.warn{background:#fef3c7;color:#92400e;border-radius:8px;padding:8px 10px;font-size:13px}
+input[readonly]{opacity:.7}
+#lock{position:fixed;inset:0;z-index:100;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:20px}
+#lock .box{width:100%;max-width:320px;text-align:center}
+#lock input{text-align:center;margin:8px 0}
+.tabs{display:flex;gap:6px;margin-bottom:12px}
+.tabs button{flex:1;background:var(--card);color:var(--tx);border:1px solid var(--bd);padding:8px}
+.tabs button.on{background:var(--pr);color:var(--prt);border-color:var(--pr)}
+.badge{font-size:12px;padding:2px 8px;border-radius:99px;margin-left:6px;font-weight:400}
+.badge.paid{background:#dcfce7;color:#166534}
+.badge.due{background:#fee2e2;color:#991b1b}
+.chk{display:flex;align-items:center;gap:8px}
+.chk input{width:auto}
+#about,#bk{position:fixed;inset:0;z-index:90;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;padding:20px}
+.abox{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:20px;width:100%;max-width:340px}
+.lk{display:block;padding:12px;border:1px solid var(--bd);border-radius:10px;margin-top:10px;color:var(--tx);text-decoration:none;word-break:break-all}
+.lk small{color:var(--mut)}
+</style>
+</head>
+<body>
+<div id="lock"><div class="box"><div style="font-size:40px">🔒</div><h1 id="lt">পাসওয়ার্ড দিন</h1><input id="lp" type="password" placeholder="পাসওয়ার্ড"><input id="lp2" type="password" placeholder="আবার লিখুন" style="display:none"><div id="le" style="color:var(--dg);font-size:13px;min-height:18px"></div><button id="lgo" style="width:100%">খুলুন</button></div></div>
+<div id="bk" style="display:none"><div class="abox" style="max-width:420px;max-height:90vh;overflow:auto"><h1 style="margin-top:0">💾 ব্যাকআপ ও রিস্টোর</h1><div class="meta">ব্যাকআপ: কপি করে Google Keep/Drive-এ রাখুন, অথবা শেয়ার দিয়ে সরাসরি Drive-এ সেভ করুন।</div><textarea id="bt" style="min-height:120px;margin-top:10px;font-size:12px" placeholder="রিস্টোর করতে ব্যাকআপ কোড এখানে পেস্ট করুন"></textarea><div class="row" style="flex-wrap:wrap"><button id="bcopy">📋 কপি</button><button id="bshare">📤 শেয়ার / Drive</button></div><div class="meta" style="margin-top:14px">ব্যাকআপ ফাইল থেকে রিস্টোর:</div><input type="file" id="bf" accept=".json,application/json,text/plain" style="margin-top:6px"><div class="row"><button class="s" id="brest">♻️ রিস্টোর করুন</button><button class="s" id="bclose">বন্ধ</button></div><div id="bmsg" class="meta" style="margin-top:8px"></div></div></div>
+<div id="about" style="display:none"><div class="abox"><div style="font-size:40px;text-align:center">📒</div><h1 style="text-align:center">ক্লায়েন্ট রেকর্ড</h1><div class="meta" style="text-align:center">তৈরি করেছেন</div><div style="text-align:center;font-size:18px;font-weight:600;margin:4px 0 14px">Ahadur Rahman</div><a class="lk" href="mailto:mdahadurrahman04@gmail.com">✉️ ইমেইল<br><small>mdahadurrahman04@gmail.com</small></a><a class="lk" href="https://www.facebook.com/share/1FUL9KF1qn/" target="_blank" rel="noopener">🌐 ফেসবুক<br><small>facebook.com/share/1FUL9KF1qn</small></a><button id="aclose" style="width:100%;margin-top:14px">বন্ধ করুন</button></div></div>
+<div class="w">
+<div class="top" style="align-items:center"><h1>📒 ক্লায়েন্ট রেকর্ড</h1><span><button class="s" id="bbtn">💾</button> <button class="s" id="abtn">ℹ️</button> <button class="s" id="chpw">🔑</button> <button class="s" id="lockbtn">🔒 লক</button></span></div>
+
+<div class="stats">
+<div class="stat"><b id="cnt">0</b><span>মোট এন্ট্রি</span></div>
+<div class="stat"><b id="tot">০</b><span>মোট বিল (টাকা)</span></div>
+<div class="stat"><b id="due" style="color:var(--dg)">০</b><span>বকেয়া (টাকা)</span></div>
+</div>
+
+<div class="card">
+<div class="g">
+<div><label>ক্রমিক নং</label><input id="sl" inputmode="numeric"></div>
+<div><label>তারিখ</label><input id="dt" type="date"></div>
+<div class="f"><label>নাম</label><input id="nm"></div>
+<div><label>মোবাইল নাম্বার</label><input id="ph" inputmode="tel"></div>
+<div><label>আইডি নাম্বার (অটো)</label><input id="idn" readonly></div>
+<div class="f warn" id="warn" style="display:none"></div>
+<div class="f"><label>কী কাজ করেছি</label><textarea id="wk"></textarea></div>
+<div class="f"><label>বিল (টাকা)</label><input id="bl" inputmode="decimal"></div>
+<div class="f chk"><input type="checkbox" id="pd"><label for="pd" style="margin:0;font-size:14px;color:var(--tx)">বিল পরিশোধ হয়েছে</label></div>
+</div>
+<div class="row"><button id="save">সংরক্ষণ করুন</button><button class="s" id="cancel" style="display:none">বাতিল</button></div>
+</div>
+
+<div class="tabs"><button data-t="all" class="on">সব</button><button data-t="due">বকেয়া</button><button data-t="paid">পরিশোধিত</button></div>
+<input id="q" placeholder="🔍 নাম, নাম্বার বা আইডি দিয়ে খুঁজুন" style="margin-bottom:12px">
+<div class="card" id="list"></div>
+</div>
+
+<script>
+const KEY="clientRecords";
+let data=[],editId=null,tab="all";
+try{data=JSON.parse(localStorage.getItem(KEY)||"[]")}catch(e){data=[]}
+const $=id=>document.getElementById(id);
+function persist(){try{localStorage.setItem(KEY,JSON.stringify(data))}catch(e){}}
+function nextId(){const m=data.reduce((a,r)=>Math.max(a,parseInt(String(r.idn).replace(/\D/g,""))||0),0)+1;return "ID-"+String(m).padStart(4,"0")}
+function normPh(p){return String(p||"").replace(/[০-৯]/g,d=>"০১২৩৪৫৬৭৮৯".indexOf(d)).replace(/\D/g,"").replace(/^88/,"")}
+function findDup(){const p=normPh($("ph").value);if(p.length<5)return null;return data.find(r=>r.id!==editId&&normPh(r.ph)===p)||null}
+function checkDup(){const d=findDup(),w=$("warn");if(d){w.style.display="";w.textContent="⚠️ এই নাম্বার আগে থেকে আছে: "+d.nm+" ("+d.idn+")"}else w.style.display="none"}
+function nextSl(){return data.reduce((m,r)=>Math.max(m,parseInt(r.sl)||0),0)+1}
+function today(){const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")}
+function reset(){editId=null;["nm","ph","wk","bl"].forEach(i=>$(i).value="");$("idn").value=nextId();$("pd").checked=false;$("warn").style.display="none";$("sl").value=nextSl();$("dt").value=today();$("save").textContent="সংরক্ষণ করুন";$("cancel").style.display="none"}
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]))}
+function render(){
+ const q=$("q").value.trim().toLowerCase();
+ const rows=data.filter(r=>(tab==="all"||(tab==="paid")===!!r.pd)&&(!q||[r.nm,r.ph,r.idn].join(" ").toLowerCase().includes(q))).sort((a,b)=>(parseInt(b.sl)||0)-(parseInt(a.sl)||0));
+ $("cnt").textContent=data.length.toLocaleString("bn-BD");
+ $("tot").textContent=data.reduce((s,r)=>s+(parseFloat(r.bl)||0),0).toLocaleString("bn-BD");
+ $("due").textContent=data.filter(r=>!r.pd).reduce((s,r)=>s+(parseFloat(r.bl)||0),0).toLocaleString("bn-BD");
+ $("list").innerHTML=rows.length?rows.map(r=>`<div class="item"><div class="top"><span class="nm">#${esc(r.sl)} ${esc(r.nm)}<span class="badge ${r.pd?"paid":"due"}">${r.pd?"পরিশোধিত":"বকেয়া"}</span></span><span class="amt">৳ ${(parseFloat(r.bl)||0).toLocaleString("bn-BD")}</span></div>
+ <div class="meta">📞 ${esc(r.ph||"-")} · 🪪 ${esc(r.idn||"-")} · 📅 ${esc(r.dt||"-")}</div>
+ <div class="meta">🛠 ${esc(r.wk||"-")}</div>
+ <div class="acts"><button class="s" onclick="tp('${r.id}')">${r.pd?"বকেয়া করুন":"✅ পরিশোধ হয়েছে"}</button><button class="s" onclick="edit('${r.id}')">এডিট</button><button class="s d" onclick="del('${r.id}')">মুছুন</button></div></div>`).join(""):'<div class="empty">কোনো রেকর্ড নেই</div>';
+}
+$("save").onclick=()=>{
+ if(!$("nm").value.trim()){alert("নাম লিখুন");return}
+ const d=findDup();let idv=$("idn").value;
+ if(d){if(!confirm("এই নাম্বার আগে থেকে আছে: "+d.nm+" ("+d.idn+")\nতবুও নতুন কাজ যোগ করবেন? (একই আইডি থাকবে)"))return;idv=d.idn}
+ const r={id:editId||String(Date.now()),sl:$("sl").value,dt:$("dt").value,nm:$("nm").value.trim(),ph:$("ph").value.trim(),idn:idv,pd:$("pd").checked,wk:$("wk").value.trim(),bl:$("bl").value};
+ if(editId){data=data.map(x=>x.id===editId?r:x)}else data.push(r);
+ persist();reset();render();
+};
+$("cancel").onclick=reset;
+$("q").oninput=render;
+$("ph").oninput=checkDup;
+window.edit=id=>{const r=data.find(x=>x.id===id);if(!r)return;editId=id;
+ $("sl").value=r.sl;$("dt").value=r.dt;$("nm").value=r.nm;$("ph").value=r.ph;$("idn").value=r.idn;$("wk").value=r.wk;$("bl").value=r.bl;$("pd").checked=!!r.pd;
+ $("save").textContent="আপডেট করুন";$("cancel").style.display="";window.scrollTo({top:0,behavior:"smooth"})};
+window.tp=id=>{data=data.map(x=>x.id===id?{...x,pd:!x.pd}:x);persist();render()};
+window.del=id=>{if(confirm("মুছে ফেলবেন?")){data=data.filter(x=>x.id!==id);persist();render()}};
+document.querySelectorAll(".tabs button").forEach(b=>b.onclick=()=>{tab=b.dataset.t;document.querySelectorAll(".tabs button").forEach(x=>x.classList.toggle("on",x===b));render()});
+reset();render();
+
+async function hash(s){try{const b=await crypto.subtle.digest("SHA-256",new TextEncoder().encode("rec:"+s));return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,"0")).join("")}catch(e){let h=5381;for(const c of "rec:"+s)h=((h<<5)+h+c.charCodeAt(0))|0;return "f"+h}}
+const PK="clientRecordsPw";
+function getPw(){try{return localStorage.getItem(PK)}catch(e){return null}}
+function showLock(){
+ const has=!!getPw();
+ $("lock").style.display="flex";$("lp").value="";$("lp2").value="";$("le").textContent="";
+ $("lt").textContent=has?"পাসওয়ার্ড দিন":"নতুন পাসওয়ার্ড সেট করুন";
+ $("lp2").style.display=has?"none":"";$("lgo").textContent=has?"খুলুন":"সেট করুন";
+}
+$("lgo").onclick=async()=>{
+ const p=$("lp").value;
+ if(getPw()){if(await hash(p)===getPw()){$("lock").style.display="none"}else $("le").textContent="ভুল পাসওয়ার্ড"}
+ else{
+  if(p.length<4){$("le").textContent="কমপক্ষে ৪ অক্ষর দিন";return}
+  if(p!==$("lp2").value){$("le").textContent="দুটো মিলছে না";return}
+  try{localStorage.setItem(PK,await hash(p))}catch(e){}
+  $("lock").style.display="none";
+ }
+};
+$("lp").onkeydown=$("lp2").onkeydown=e=>{if(e.key==="Enter")$("lgo").click()};
+$("lockbtn").onclick=showLock;
+$("chpw").onclick=()=>{if(confirm("পাসওয়ার্ড বদলাতে চান?")){try{localStorage.removeItem(PK)}catch(e){}showLock()}};
+$("abtn").onclick=()=>{$("about").style.display="flex"};
+$("aclose").onclick=()=>{$("about").style.display="none"};
+$("about").onclick=e=>{if(e.target===$("about"))$("about").style.display="none"};
+function bkData(){return JSON.stringify({v:1,t:new Date().toISOString(),data})}
+$("bbtn").onclick=()=>{$("bt").value=bkData();$("bmsg").textContent="";$("bk").style.display="flex"};
+$("bclose").onclick=()=>{$("bk").style.display="none"};
+$("bcopy").onclick=async()=>{try{await navigator.clipboard.writeText($("bt").value);$("bmsg").textContent="✅ কপি হয়েছে। Google Keep বা Drive-এর কোনো ডকে পেস্ট করে রাখুন।"}catch(e){$("bt").select();$("bmsg").textContent="লেখাটা সিলেক্ট হয়েছে, ম্যানুয়ালি কপি করুন।"}};
+$("bshare").onclick=async()=>{
+ const txt=bkData();
+ try{
+  const f=new File([txt],"client-backup-"+today()+".json",{type:"application/json"});
+  if(navigator.canShare&&navigator.canShare({files:[f]}))await navigator.share({files:[f],title:"ক্লায়েন্ট রেকর্ড ব্যাকআপ"});
+  else await navigator.share({title:"ক্লায়েন্ট রেকর্ড ব্যাকআপ",text:txt});
+ }catch(e){$("bmsg").textContent="শেয়ার হয়নি, কপি বাটন ব্যবহার করুন।"}
+};
+$("bf").onchange=e=>{const f=e.target.files[0];if(!f)return;const fr=new FileReader();fr.onload=()=>{$("bt").value=fr.result;$("bmsg").textContent="ফাইল পড়া হয়েছে, এখন রিস্টোর চাপুন।"};fr.readAsText(f)};
+$("brest").onclick=()=>{
+ let o;try{o=JSON.parse($("bt").value)}catch(e){$("bmsg").textContent="❌ কোডটা ঠিক নেই";return}
+ const arr=Array.isArray(o)?o:(o&&o.data);
+ if(!Array.isArray(arr)){$("bmsg").textContent="❌ কোডটা ঠিক নেই";return}
+ if(!confirm(arr.length+"টি রেকর্ড পাওয়া গেছে। বর্তমান ডেটার সাথে মিলিয়ে নেবেন? (আগে থেকে থাকা রেকর্ড দ্বিগুণ হবে না)"))return;
+ const ids=new Set(data.map(r=>r.id));let n=0;
+ arr.forEach(r=>{if(r&&typeof r.id==="string"&&/^[\w-]+$/.test(r.id)&&!ids.has(r.id)){data.push(r);ids.add(r.id);n++}});
+ persist();reset();render();
+ $("bmsg").textContent="✅ "+n+"টি নতুন রেকর্ড যোগ হয়েছে";
+};
+showLock();
+</script>
+</body>
+</html>
